@@ -1,71 +1,167 @@
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, TrendingUp, Hash } from 'lucide-react';
-import { Header } from '@/layout/Header';
-import { Input } from '@/components/ui/input';
-import { trendingTopics, sportsTopics } from '@/lib/mockData';
+import { Search, X, Flame, TrendingUp, Users, Trophy, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { trendingTopics, users, posts } from '@/lib/mockData';
+import { PostCard } from '@/components/PostCard';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+const categories = [
+  { id: 'all',        label: 'All',        icon: Zap        },
+  { id: 'football',   label: 'Football',   icon: Trophy     },
+  { id: 'basketball', label: 'Basketball', icon: TrendingUp },
+  { id: 'trending',   label: 'Trending',   icon: Flame      },
+  { id: 'people',     label: 'People',     icon: Users      },
+];
 
 export function ExplorePage() {
-  return (
-    <div>
-      <Header title="Explore" />
-      
-      {/* Search Bar */}
-      <div className="p-4 border-b border-[#2f3336]">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#71767b]" />
-          <Input 
-            placeholder="Search SportX"
-            className="w-full h-12 pl-12 bg-[#16181c] border-none rounded-full text-[#e7e9ea] placeholder:text-[#71767b] focus:ring-2 focus:ring-[#1d9bf0]"
-          />
-        </div>
-      </div>
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialQ = searchParams.get('q') || '';
+  const [query,     setQuery]     = useState(initialQ);
+  const [active,    setActive]    = useState('all');
+  const [searching, setSearching] = useState(!!initialQ);
 
-      {/* Trending Section */}
-      <div className="border-b border-[#2f3336]">
-        <h2 className="text-xl font-bold px-4 py-4">Trending</h2>
-        {trendingTopics.map((topic, index) => (
-          <motion.div 
-            key={topic.id}
-            className="px-4 py-3 hover:bg-white/[0.03] cursor-pointer transition-colors border-b border-[#2f3336] last:border-b-0"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
-            whileHover={{ x: 4 }}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs text-[#71767b]">{topic.category}</p>
-                <p className="font-bold text-[#e7e9ea] text-lg">#{topic.topic}</p>
-                <p className="text-xs text-[#71767b]">{topic.posts}</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-[#16181c] flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-[#1d9bf0]" />
-              </div>
-            </div>
-          </motion.div>
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) setSearching(true);
+  };
+
+  const clearSearch = () => { setQuery(''); setSearching(false); };
+
+  const filteredPosts  = posts.filter(p =>
+    p.content.toLowerCase().includes(query.toLowerCase()) ||
+    p.user.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredUsers  = users.filter(u =>
+    u.name.toLowerCase().includes(query.toLowerCase()) ||
+    u.handle.toLowerCase().includes(query.toLowerCase()));
+  const filteredTopics = trendingTopics.filter(t =>
+    t.topic.toLowerCase().includes(query.toLowerCase()) ||
+    t.category.toLowerCase().includes(query.toLowerCase()));
+
+  return (
+    <div className="min-h-screen">
+      <div className="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-white/5 px-4 py-3">
+        <form onSubmit={handleSearch} className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71767b]" />
+          <input value={query}
+            onChange={e => { setQuery(e.target.value); if (!e.target.value) setSearching(false); }}
+            placeholder="Search ARENA..."
+            className="w-full h-11 pl-11 pr-10 bg-[#16181c] border border-transparent focus:border-[#ef4444]/50 rounded-full text-white text-sm placeholder:text-[#71767b] outline-none transition-colors" />
+          {query && (
+            <button type="button" onClick={clearSearch}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10">
+              <X className="w-4 h-4 text-[#71767b]" />
+            </button>
+          )}
+        </form>
+      </div>
+      <div className="flex gap-2 px-4 py-3 overflow-x-auto border-b border-white/5">
+        {categories.map(cat => (
+          <button key={cat.id} onClick={() => setActive(cat.id)}
+            className={cn('flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all shrink-0',
+              active === cat.id ? 'bg-[#ef4444] text-white' : 'bg-white/5 text-[#71767b] hover:bg-white/10')}>
+            <cat.icon className="w-3.5 h-3.5" />{cat.label}
+          </button>
         ))}
       </div>
-
-      {/* Sports Topics */}
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Sports Topics</h2>
-        <div className="flex flex-wrap gap-2">
-          {sportsTopics.map((topic, index) => (
-            <motion.button
-              key={topic.id}
-              className="flex items-center gap-2 px-4 py-2 bg-[#16181c] rounded-full hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0] transition-colors"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.05 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Hash className="w-4 h-4" />
-              <span className="text-sm font-medium">{topic.name}</span>
-            </motion.button>
-          ))}
+      {searching && query ? (
+        <div className="divide-y divide-white/5">
+          {(active === 'all' || active === 'people') && filteredUsers.length > 0 && (
+            <div>
+              <div className="px-4 py-2 bg-white/[0.02]"><p className="text-xs font-bold text-[#71767b] uppercase tracking-wider">People</p></div>
+              {filteredUsers.map(user => (
+                <motion.button key={user.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  onClick={() => navigate(`/user/${user.id}`)}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors text-left">
+                  <Avatar className="w-10 h-10 ring-1 ring-[#ef4444]/30">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm">{user.name}</p>
+                    <p className="text-xs text-[#71767b]">{user.handle}</p>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          )}
+          {(active === 'all' || active === 'trending') && filteredTopics.length > 0 && (
+            <div>
+              <div className="px-4 py-2 bg-white/[0.02]"><p className="text-xs font-bold text-[#71767b] uppercase tracking-wider">Topics</p></div>
+              {filteredTopics.map(topic => (
+                <motion.button key={topic.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  onClick={() => setQuery(`#${topic.topic}`)}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors text-left">
+                  <div className="w-10 h-10 rounded-full bg-[#ef4444]/10 flex items-center justify-center shrink-0">
+                    <Flame className="w-5 h-5 text-[#ef4444]" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm">#{topic.topic}</p>
+                    <p className="text-xs text-[#71767b]">{topic.category} · {topic.posts}</p>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          )}
+          {(active === 'all' || active === 'football' || active === 'basketball') && filteredPosts.length > 0 && (
+            <div>
+              <div className="px-4 py-2 bg-white/[0.02]"><p className="text-xs font-bold text-[#71767b] uppercase tracking-wider">Posts</p></div>
+              {filteredPosts.map(post => <PostCard key={post.id} post={post} />)}
+            </div>
+          )}
+          {filteredPosts.length === 0 && filteredUsers.length === 0 && filteredTopics.length === 0 && (
+            <div className="py-20 text-center px-6">
+              <p className="text-4xl mb-3">??</p>
+              <p className="font-bold text-lg">No results for "{query}"</p>
+              <p className="text-sm text-[#71767b] mt-1">Try different keywords</p>
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        <div>
+          <div className="px-4 py-3 border-b border-white/5">
+            <div className="flex items-center gap-2 mb-3"><Flame className="w-4 h-4 text-[#ef4444]" /><h2 className="font-bold">Trending Topics</h2></div>
+            <div className="grid grid-cols-2 gap-2">
+              {trendingTopics.slice(0, 6).map((topic, i) => (
+                <motion.button key={topic.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                  onClick={() => { setQuery(topic.topic); setSearching(true); }}
+                  className="flex flex-col items-start p-3 bg-white/[0.03] border border-white/5 rounded-xl hover:border-[#ef4444]/30 transition-all text-left">
+                  <span className="text-xs text-[#ef4444] font-bold mb-1">#{i + 1} {topic.category}</span>
+                  <span className="font-bold text-sm">#{topic.topic}</span>
+                  <span className="text-xs text-[#71767b] mt-0.5">{topic.posts}</span>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+          <div className="px-4 py-3 border-b border-white/5">
+            <div className="flex items-center gap-2 mb-3"><Users className="w-4 h-4 text-[#ef4444]" /><h2 className="font-bold">Who to Follow</h2></div>
+            {users.slice(0, 4).map((user, i) => (
+              <motion.div key={user.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
+                className="flex items-center gap-3 py-2">
+                <button onClick={() => navigate(`/user/${user.id}`)}>
+                  <Avatar className="w-10 h-10 ring-1 ring-[#ef4444]/30">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                  </Avatar>
+                </button>
+                <button onClick={() => navigate(`/user/${user.id}`)} className="flex-1 min-w-0 text-left">
+                  <p className="font-bold text-sm hover:underline">{user.name}</p>
+                  <p className="text-xs text-[#71767b]">{user.handle}</p>
+                </button>
+                <button className="px-3 py-1.5 bg-white text-black text-xs font-bold rounded-full hover:bg-white/90 shrink-0">Follow</button>
+              </motion.div>
+            ))}
+          </div>
+          <div>
+            <div className="px-4 py-3 border-b border-white/5">
+              <div className="flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#ef4444]" /><h2 className="font-bold">Trending Posts</h2></div>
+            </div>
+            {posts.slice(0, 5).map(post => <PostCard key={post.id} post={post} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

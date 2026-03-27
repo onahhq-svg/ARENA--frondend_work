@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Calendar, Link as LinkIcon, MapPin, BadgeCheck, Mail, Trophy, Target, Flame, TrendingUp, Settings, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Link as LinkIcon, MapPin, BadgeCheck, Mail, Trophy, Target, Flame, TrendingUp, Settings, ChevronRight, Crown } from 'lucide-react';
 import { currentUser, posts } from '@/lib/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { PostCard } from '@/components/PostCard';
+import { EditProfileModal } from '@/components/EditProfileModal';
 import { cn } from '@/lib/utils';
 
 const tabs = ['Posts', 'Replies', 'Media', 'Likes', 'Sports', 'Predictions'];
@@ -16,8 +18,12 @@ const userStats = [
 ];
 
 export function ProfilePage() {
+  const navigate = useNavigate();
+  const isTipster = localStorage.getItem('arena_role') === 'tipster';
   const [activeTab, setActiveTab] = useState('Posts');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [, setProfileData] = useState({ name: currentUser.name, bio: currentUser.bio, location: currentUser.location, website: currentUser.website });
   const settingsRef = useRef<HTMLDivElement>(null);
   const userPosts = posts.filter(post => post.user.id === currentUser.id);
 
@@ -132,9 +138,17 @@ export function ProfilePage() {
             >
               <Mail className="w-4 h-4" />
             </Button>
-            <Button className="rounded-full bg-gradient-to-r from-[#dc2626] to-[#ef4444] hover:from-[#b91c1c] hover:to-[#dc2626] text-white font-bold">
+            <Button className="rounded-full bg-gradient-to-r from-[#dc2626] to-[#ef4444] hover:from-[#b91c1c] hover:to-[#dc2626] text-white font-bold"
+              onClick={() => setEditProfileOpen(true)}>
               Edit profile
             </Button>
+            {isTipster && (
+              <Button
+                onClick={() => navigate(`/tipster/${currentUser.id}`)}
+                className="rounded-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-black font-bold hover:from-yellow-400 hover:to-yellow-300 flex items-center gap-1.5">
+                <Crown className="w-4 h-4" /> Tipster Page
+              </Button>
+            )}
           </div>
         </div>
 
@@ -143,9 +157,36 @@ export function ProfilePage() {
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold">{currentUser.name}</h2>
             <BadgeCheck className="w-5 h-5 text-[#ef4444] fill-[#ef4444]" />
+            {isTipster && (
+              <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+                <Crown className="w-3 h-3" /> Tipster
+              </span>
+            )}
           </div>
           <p className="text-[#71767b]">{currentUser.handle}</p>
         </div>
+
+        {/* Become Tipster CTA — only for regular users */}
+        {!isTipster && (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => {
+              localStorage.setItem('arena_role', 'tipster');
+              window.location.reload();
+            }}
+            className="w-full mb-4 flex items-center justify-between px-4 py-3 bg-gradient-to-r from-yellow-500/10 to-yellow-400/5 border border-yellow-500/30 rounded-xl hover:border-yellow-500/60 transition-all group">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                <Crown className="w-4 h-4 text-yellow-400" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-bold text-yellow-400">Become a Tipster</p>
+                <p className="text-xs text-[#71767b]">Share predictions, grow an audience, earn</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-yellow-400 group-hover:translate-x-0.5 transition-transform" />
+          </motion.button>
+        )}
 
         {/* Bio */}
         <p className="text-[#e7e9ea] mb-4">{currentUser.bio}</p>
@@ -236,6 +277,11 @@ export function ProfilePage() {
           </div>
         )}
       </div>
+      <EditProfileModal
+        open={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+        onSave={(data) => setProfileData(prev => ({ ...prev, ...data }))}
+      />
     </div>
   );
 }

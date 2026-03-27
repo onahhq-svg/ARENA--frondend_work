@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
 import { Search, Settings, MailPlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { conversations } from '@/lib/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
 export function MessagesPage() {
   return (
-    <div className="h-[calc(100vh-80px)] md:h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[#2f3336]">
         <h1 className="text-xl font-bold">Messages</h1>
@@ -44,9 +43,9 @@ export function MessagesPage() {
             <p className="text-[#71767b] mb-6">
               Drop a line, share posts and more with private conversations between you and others on SportX.
             </p>
-            <Button className="bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white font-bold rounded-full px-6">
+            <button className="bg-[#ef4444] hover:bg-[#dc2626] text-white font-bold rounded-full px-6 py-2">
               Write a message
-            </Button>
+            </button>
           </div>
         ) : (
           <div>

@@ -1,0 +1,48 @@
+import { users } from '@/lib/mockData';
+
+export const mockVideos = [
+  {
+    id: 'v1',
+    user: users[0],
+    caption: 'That Saka goal from last night 🔥 Absolute worldie from 25 yards #Arsenal #PremierLeague',
+    category: 'Highlight',
+    emoji: '⚽',
+    likes: 24800,
+    comments: 1240,
+    reposts: 3400,
+    thumbnail: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&h=700&fit=crop',
+  },
+  {
+    id: 'v2',
+    user: users[1],
+    caption: "My prediction for the weekend 🎯 Lakers to cover -5.5. Here's why... #NBA #Predictions",
+    category: 'Prediction',
+    emoji: '🏀',
+    likes: 8900,
+    comments: 567,
+    reposts: 1200,
+    thumbnail: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=700&fit=crop',
+  },
+  {
+    id: 'v3',
+    user: users[2],
+    caption: 'El Clasico reaction 😤 I CANNOT believe that refereeing decision. Robbery. #ElClasico #LaLiga',
+    category: 'Reaction',
+    emoji: '😤',
+    likes: 45200,
+    comments: 3890,
+    reposts: 7800,
+    thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=700&fit=crop',
+  },
+  {
+    id: 'v4',
+    user: users[3],
+    caption: 'Djokovic training session 👀 The footwork is insane at 36 years old #Tennis #Wimbledon',
+    category: 'Highlight',
+    emoji: '🎾',
+    likes: 12300,
+    comments: 445,
+    reposts: 890,
+    thumbnail: 'https://images.unsplash.com/photo-1622163642998-1ea32b0bbc67?w=400&h=700&fit=crop',
+  },
+];

@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { Crown, TrendingUp, Medal, Flame, Trophy, Users, Globe, UserCheck } from 'lucide-react';
+import { Crown, Medal, Flame, Trophy, Globe } from 'lucide-react';
 import { Header } from '@/layout/Header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -21,9 +22,10 @@ const leaderboardData = [
 ];
 
 const topThreeColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
+const topThreeRings = ['ring-yellow-400', 'ring-gray-300', 'ring-amber-600'];
 const topThreeLabels = ['1st', '2nd', '3rd'];
 
-const rankIcons: Record<number, JSX.Element> = {
+const rankIcons: Record<number, ReactNode> = {
   1: <Crown className="w-4 h-4 text-yellow-400" />,
   2: <Medal className="w-4 h-4 text-gray-400" />,
   3: <Medal className="w-4 h-4 text-amber-600" />,
@@ -33,7 +35,6 @@ export function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState('Global');
 
   const topThree = leaderboardData.slice(0, 3);
-  const rest = leaderboardData.slice(3);
 
   return (
     <div>
@@ -87,7 +88,7 @@ export function LeaderboardPage() {
                 className="flex flex-col items-center gap-2"
               >
                 <div className="relative">
-                  <Avatar className="w-14 h-14 ring-2" style={{ ringColor: topThreeColors[actualRank - 1] }}>
+                  <Avatar className={`w-14 h-14 ring-2 ${topThreeRings[actualRank - 1]}`}>
                     <AvatarImage src={user.avatar} />
                     <AvatarFallback>{user.name[0]}</AvatarFallback>
                   </Avatar>

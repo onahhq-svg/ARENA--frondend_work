@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Wallet, ArrowUpRight, ArrowDownLeft, Clock, ChevronRight, Plus, Minus } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDownLeft, Clock, Plus, Minus } from 'lucide-react';
 import { Header } from '@/layout/Header';
 import { cn } from '@/lib/utils';
 

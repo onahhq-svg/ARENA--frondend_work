@@ -6,27 +6,31 @@ import { MobileNav } from './MobileNav';
 
 interface MainLayoutProps {
   children: ReactNode;
+  onAuthRequired?: () => void;
+  isGuest?: boolean;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarW = sidebarOpen ? 240 : 72;
 
   return (
-    <div className="flex min-h-screen bg-black overflow-x-hidden">
-      {/* Left Sidebar */}
+    <div className="flex bg-black min-h-screen overflow-x-hidden">
+
+      {/* Left Sidebar — desktop only */}
       <aside
-        className="hidden md:flex flex-col fixed left-0 top-0 h-screen z-30 transition-all duration-200 ease-in-out"
-        style={{ width: sidebarOpen ? 240 : 72 }}
+        className="hidden md:flex flex-col fixed left-0 top-0 h-screen z-30 transition-all duration-200"
+        style={{ width: sidebarW }}
       >
         <Sidebar onExpandChange={setSidebarOpen} />
       </aside>
 
-      {/* Main Content - shifts with sidebar */}
-      <main
-        className="flex-1 w-full min-w-0 min-h-screen pb-20 md:pb-0 overflow-x-hidden transition-all duration-200 ease-in-out lg:mr-[350px]"
-        style={{ marginLeft: sidebarOpen ? 240 : 72 }}
-      >
-        {children}
+      {/* Main content */}
+      <main className="flex-1 min-w-0 overflow-x-hidden transition-all duration-200 pb-16 md:pb-0 lg:mr-[350px]">
+        <style>{`@media (min-width: 768px) { .main-content { margin-left: ${sidebarW}px; } }`}</style>
+        <div className="main-content">
+          {children}
+        </div>
       </main>
 
       {/* Right Sidebar */}
@@ -34,8 +38,13 @@ export function MainLayout({ children }: MainLayoutProps) {
         <RightSidebar />
       </aside>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Nav */}
       <MobileNav />
     </div>
   );
 }
+
+
+
+
+
