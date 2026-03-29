@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import {MainLayout} from '@/layout/MainLayout';
+import { MainLayout } from '@/layout/MainLayout';
 import { HomePage } from '@/pages/HomePage';
 import { ExplorePage } from '@/pages/ExplorePage';
 import { NotificationsPage } from '@/pages/NotificationsPage';
