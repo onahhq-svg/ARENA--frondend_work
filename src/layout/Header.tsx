@@ -81,8 +81,8 @@ export function Header({
             </motion.button>
           ) : (
             <button className="lg:hidden" onClick={() => window.dispatchEvent(new Event('toggle-mobile-menu'))}>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ef4444] to-[#dc2626] flex items-center justify-center">
-                <span className="text-white font-black text-xs tracking-tight">AR</span>
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
+                <img src="/logo.jpg" alt="ARENA" className="w-full h-full object-cover" />
               </div>
             </button>
           )}

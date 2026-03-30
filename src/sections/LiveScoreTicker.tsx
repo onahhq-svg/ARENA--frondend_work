@@ -1,86 +1,60 @@
-import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Flame, TrendingUp, Activity } from 'lucide-react';
-import { ScoreCard } from '@/components/ScoreCard';
-import { liveMatches } from '@/lib/mockData';
+
+const liveMatches = [
+  { id: 'm1', homeLogo: '🔵', homeAbbr: 'MCI', homeScore: 2, awayLogo: '🔴', awayAbbr: 'ARS', awayScore: 1, minute: "67'" },
+  { id: 'm4', homeLogo: '🟡', homeAbbr: 'RMA', homeScore: 3, awayLogo: '🔵', awayAbbr: 'BAR', awayScore: 2, minute: "78'" },
+  { id: 'm2', homeLogo: '❤️', homeAbbr: 'LIV', homeScore: 1, awayLogo: '💙', awayAbbr: 'CHE', awayScore: 1, minute: "45'" },
+  { id: 'm6', homeLogo: '🔴', homeAbbr: 'BAY', homeScore: 2, awayLogo: '🔵', awayAbbr: 'PSG', awayScore: 0, minute: "52'" },
+  { id: 'm8', homeLogo: '💜', homeAbbr: 'LAL', homeScore: 98, awayLogo: '💙', awayAbbr: 'GSW', awayScore: 102, minute: "Q3" },
+];
 
 export function LiveScoreTicker() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 220;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
+  const navigate = useNavigate();
 
   return (
-    <div className="relative border-b border-[#ef4444]/30 bg-gradient-to-r from-[#0a0a0a] via-[#1a0a0a] to-[#0a0a0a]">
-      {/* Header */}
+    <div className="border-b border-white/5 bg-black">
+      {/* Header row */}
       <div className="flex items-center justify-between px-4 py-2">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#ef4444] animate-live-pulse-red" />
-            <h2 className="text-sm font-bold text-[#e7e9ea]">Live Matches</h2>
-          </div>
-          <span className="text-xs text-[#71767b] bg-[#ef4444]/10 px-2 py-0.5 rounded-full">
-            {liveMatches.length} games
-          </span>
-        </div>
         <div className="flex items-center gap-2">
-          <motion.button 
-            onClick={() => scroll('left')}
-            className="p-1.5 rounded-full bg-[#ef4444]/10 hover:bg-[#ef4444]/20 transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <ChevronLeft className="w-4 h-4 text-[#ef4444]" />
-          </motion.button>
-          <motion.button 
-            onClick={() => scroll('right')}
-            className="p-1.5 rounded-full bg-[#ef4444]/10 hover:bg-[#ef4444]/20 transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <ChevronRight className="w-4 h-4 text-[#ef4444]" />
-          </motion.button>
+          <span className="w-2 h-2 rounded-full bg-[#ef4444] animate-pulse" />
+          <span className="text-xs font-bold text-[#ef4444]">Live Matches</span>
+          <span className="text-xs text-[#71767b]">{liveMatches.length} games</span>
         </div>
+        <button onClick={() => navigate('/live')} className="text-xs text-[#ef4444] font-semibold hover:underline">
+          See all
+        </button>
       </div>
 
-      {/* Quick Stats Bar */}
-      <div className="flex items-center gap-4 px-4 pb-2 text-xs">
-        <div className="flex items-center gap-1 text-[#ef4444]">
-          <Flame className="w-3 h-3" />
-          <span>Hot Matches</span>
-        </div>
-        <div className="flex items-center gap-1 text-[#71767b]">
-          <TrendingUp className="w-3 h-3" />
-          <span>2.4M watching</span>
-        </div>
-        <div className="flex items-center gap-1 text-[#71767b]">
-          <Activity className="w-3 h-3" />
-          <span>Live odds updating</span>
-        </div>
-      </div>
+      {/* Score cards — horizontal format: logo abbr · score:score · abbr logo */}
+      <div className="flex gap-2 px-4 pb-3 overflow-x-auto">
+        {liveMatches.map((match, i) => (
+          <motion.button key={match.id}
+            initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+            onClick={() => navigate('/live')}
+            className="flex items-center gap-1.5 bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2 hover:bg-white/[0.08] hover:border-[#ef4444]/30 transition-all shrink-0 active:scale-95">
 
-      {/* Scrolling Container */}
-      <div 
-        ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-3 snap-x snap-mandatory"
-      >
-        {liveMatches.map((match, index) => (
-          <motion.div
-            key={match.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="snap-start"
-          >
-            <ScoreCard match={match} showStats={index === 0} />
-          </motion.div>
+            {/* Home */}
+            <span className="text-base leading-none">{match.homeLogo}</span>
+            <span className="text-xs font-bold text-[#e7e9ea]">{match.homeAbbr}</span>
+
+            {/* Score */}
+            <div className="flex items-center gap-0.5 mx-1">
+              <span className="text-xs font-black text-white">{match.homeScore}</span>
+              <span className="text-[10px] text-[#71767b] mx-0.5">:</span>
+              <span className="text-xs font-black text-white">{match.awayScore}</span>
+            </div>
+
+            {/* Away */}
+            <span className="text-xs font-bold text-[#e7e9ea]">{match.awayAbbr}</span>
+            <span className="text-base leading-none">{match.awayLogo}</span>
+
+            {/* Live minute */}
+            <div className="flex items-center gap-0.5 ml-1.5 bg-[#ef4444]/15 rounded-full px-1.5 py-0.5">
+              <span className="w-1 h-1 rounded-full bg-[#ef4444] animate-pulse" />
+              <span className="text-[9px] text-[#ef4444] font-bold">{match.minute}</span>
+            </div>
+          </motion.button>
         ))}
       </div>
     </div>
