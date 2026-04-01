@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, X, Flame, TrendingUp, Users, Trophy, Zap } from 'lucide-react';
@@ -18,16 +18,10 @@ const categories = [
 export function ExplorePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [query,     setQuery]     = useState(searchParams.get('q') || '');
+  const initialQ = searchParams.get('q') || '';
+  const [query,     setQuery]     = useState(initialQ);
   const [active,    setActive]    = useState('all');
-  const [searching, setSearching] = useState(!!searchParams.get('q'));
-
-  // Sync URL param to search input
-  useEffect(() => {
-    const q = searchParams.get('q');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (q) { setQuery(q); setSearching(true); }
-  }, [searchParams]);
+  const [searching, setSearching] = useState(!!initialQ);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,15 +159,15 @@ export function ExplorePage() {
               <Flame className="w-4 h-4 text-[#ef4444]" />
               <h2 className="font-bold">Trending Topics</h2>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-2">
               {trendingTopics.slice(0, 6).map((topic, i) => (
                 <motion.button key={topic.id}
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                   onClick={() => { setQuery(topic.topic); setSearching(true); }}
-                  className="flex flex-col items-start p-3 bg-white/[0.03] border border-white/5 rounded-xl hover:border-[#ef4444]/30 hover:bg-[#ef4444]/5 transition-all text-left">
-                  <span className="text-xs text-[#ef4444] font-bold mb-1">#{i + 1} {topic.category}</span>
-                  <span className="font-bold text-sm">#{topic.topic}</span>
-                  <span className="text-xs text-[#71767b] mt-0.5">{topic.posts}</span>
+                  className="flex items-center gap-2 p-3 bg-white/[0.03] border border-white/5 rounded-xl hover:border-[#ef4444]/30 hover:bg-[#ef4444]/5 transition-all text-left md:flex-col md:items-start">
+                  <span className="text-xs text-[#ef4444] font-bold shrink-0">#{i + 1}</span>
+                  <span className="font-bold text-sm truncate">#{topic.topic}</span>
+                  <span className="text-xs text-[#71767b] shrink-0 ml-auto md:ml-0">{topic.posts}</span>
                 </motion.button>
               ))}
             </div>

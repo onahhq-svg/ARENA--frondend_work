@@ -14,26 +14,33 @@ import { LivePage } from '@/pages/LivePage';
 import { CommunitiesPage } from '@/pages/CommunitiesPage';
 import { WalletPage } from '@/pages/WalletPage';
 import { BookmarksPage } from '@/pages/BookmarksPage';
-// import { AuthFlow } from '@/components/AuthFlow';
+// Remove this import - it creates a circular reference
 import { GuestBanner } from '@/components/GuestBanner';
 import { PostDetailPage } from '@/pages/PostDetailPage';
 import { UserProfileView } from '@/pages/UserProfileView';
 import { CommunityDetailPage } from '@/pages/CommunityDetailPage';
 import { TipsterProfilePage } from '@/pages/TipsterProfilePage';
 
-function App() {
+export function App() {
   const [authed, setAuthed] = useState<boolean>(() => {
     return localStorage.getItem('arena_authed') === 'true';
   });
+  const [showAuth, setShowAuth] = useState(false);
   const isTipster = localStorage.getItem('arena_role') === 'tipster';
 
-  // if (showAuth) {
-  //   return <AuthFlow onComplete={handleAuthComplete} />;
-  // }
+  const handleAuthComplete = () => {
+    localStorage.setItem('arena_authed', 'true');
+    setAuthed(true);
+    setShowAuth(false);
+  };
+
+  if (showAuth) {
+    return <AuthFlow onComplete={handleAuthComplete} />;
+  }
 
   return (
     <MainLayout>
-      {!authed && <GuestBanner onSignIn={() => setAuthed(true)} />}
+      {!authed && <GuestBanner onSignIn={() => setShowAuth(true)} />}
       <Routes>
         <Route path="/"                   element={<HomePage />} />
         <Route path="/live"               element={<LivePage />} />

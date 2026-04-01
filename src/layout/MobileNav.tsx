@@ -11,11 +11,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { currentUser } from '@/lib/mockData';
 
 // ── Bottom bar — Messages & Notifications moved up ──
-const bottomNavItems = [
+const bottomNavItems: Array<{ icon: typeof Home; label: string; href: string; badge?: number }> = [
   { icon: Home,  label: 'Home',          href: '/' },
-  { icon: Mail,  label: 'Messages',      href: '/messages',      badge: 2  },
+  { icon: Users,      label: 'Communities',   href: '/communities' },
   { icon: Zap,   label: 'Live',          href: '/live' },
-  { icon: Bell,  label: 'Notifications', href: '/notifications', badge: 17 },
+  { icon: TrendingUp, label: 'Leaderboard',   href: '/leaderboard' },
   { icon: Search,label: 'Explore',       href: '/explore' },
 ];
 
